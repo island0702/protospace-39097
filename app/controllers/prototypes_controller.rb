@@ -1,4 +1,5 @@
 class PrototypesController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :set_prototype, only: :edit
   before_action :move_to_edit, only: :edit
   
@@ -37,7 +38,7 @@ class PrototypesController < ApplicationController
   def update
     @prototype = Prototype.find(params[:id])
     if @prototype.update(prototype_params)
-      redirect_to root_path
+      redirect_to prototype_path(@prototype)
     else
       render :edit
     end
@@ -45,11 +46,8 @@ class PrototypesController < ApplicationController
 
   def destroy
     @prototype = Prototype.find(params[:id])
-    if @prototype.image.attached? # 画像ファイルがアタッチされている場合は削除
-      @prototype.image.purge 
-    end
     @prototype.destroy # Prototypeのレコードを削除
-    redirect_to root_path, notice: "投稿を削除しました。"
+    redirect_to root_path
   end
   
 
